@@ -16,7 +16,8 @@
   <a href="#keyboard-reference">Keys</a> ·
   <a href="#settings-file">Settings</a> ·
   <a href="#start-automatically-at-login">Autostart</a> ·
-  <a href="#troubleshooting">Troubleshooting</a>
+  <a href="#troubleshooting">Troubleshooting</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
 </p>
 
 ---
