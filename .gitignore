@@ -10,3 +10,6 @@ WacomStuMouseBridge/lib/*.dll
 
 # Local calibration (screen positions are specific to each PC)
 wacom-bridge.conf
+
+# Release builds (upload the zip to GitHub Releases instead)
+release/

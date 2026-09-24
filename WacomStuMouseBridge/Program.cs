@@ -75,6 +75,14 @@ internal static class Program
             Console.WriteLine();
             Console.WriteLine("ERROR: Could not connect to the STU tablet.");
             Console.WriteLine(ex.Message);
+            if (IsMissingWacomSdk(ex))
+            {
+                Console.WriteLine();
+                Console.WriteLine("The Wacom STU SDK files are missing. Copy these two files next to the EXE:");
+                Console.WriteLine(@"  C:\Program Files (x86)\Wacom STU SDK\COM\bin\x64\Interop.wgssSTU.dll");
+                Console.WriteLine(@"  C:\Program Files (x86)\Wacom STU SDK\COM\bin\x64\wgssSTU.dll");
+                Console.WriteLine($"  -> {AppContext.BaseDirectory}");
+            }
             Console.WriteLine();
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey(true);
@@ -136,6 +144,21 @@ internal static class Program
         Console.WriteLine($"Tablet: {info.modelName}");
         Console.WriteLine($"Tablet coordinate max: {_capability.tabletMaxX} x {_capability.tabletMaxY}");
         Console.WriteLine($"LCD: {_capability.screenWidth} x {_capability.screenHeight} ({(_padIsColor ? "colour" : "monochrome")})");
+    }
+
+    private static bool IsMissingWacomSdk(Exception ex)
+    {
+        const int ModuleNotFound = unchecked((int)0x8007007E); // wgssSTU.dll missing
+        const int ClassNotRegistered = unchecked((int)0x80040154); // wrong/32-bit wgssSTU.dll
+
+        for (var e = ex; e is not null; e = e.InnerException)
+        {
+            if (e is FileNotFoundException or FileLoadException) // Interop.wgssSTU.dll missing
+                return true;
+            if (e.HResult is ModuleNotFound or ClassNotRegistered)
+                return true;
+        }
+        return false;
     }
 
     private static void LoadSettings()

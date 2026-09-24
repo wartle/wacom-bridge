@@ -33,6 +33,10 @@ First public release.
 - **64-bit build without admin rights.** Registration-free COM (`app.manifest`) loads the
   x64 Wacom `wgssSTU.dll` from the EXE folder, so `regsvr32` isn't needed.
 - `build.ps1` build script, which checks that the Wacom SDK files are present first.
+- `release.ps1`: builds a self-contained single-file release zip without the Wacom DLLs.
+  No .NET install needed on the target PC.
+- Clear startup message that says which Wacom SDK files to copy, and where, when they
+  are missing.
 
 ### Safety
 

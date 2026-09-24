@@ -31,4 +31,14 @@
     </Reference>
     <None Include="lib\wgssSTU.dll" Link="wgssSTU.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <!--
+    Single-file publish: keep Wacom's interop as a separate file next to the EXE, so a
+    release zip can ship without Wacom's proprietary DLLs and users supply their own.
+  -->
+  <Target Name="KeepWacomInteropOutsideBundle" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <ResolvedFileToPublish Update="@(ResolvedFileToPublish)" Condition="'%(Filename)%(Extension)' == 'Interop.wgssSTU.dll'" ExcludeFromSingleFile="true" />
+    </ItemGroup>
+  </Target>
 </Project>
