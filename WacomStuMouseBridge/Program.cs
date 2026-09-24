@@ -22,8 +22,9 @@ internal static class Program
     private static int _right = 900;
     private static int _bottom = 600;
 
-    // Screen positions of the website's own Clear / Save buttons (F5 / F6).
-    // Tapping Clear / Save on the STU clicks these.
+    // Screen positions of the website's own Cancel / Clear / Save buttons (F4 / F5 / F6).
+    // Tapping the matching button on the STU clicks these.
+    private static POINT? _webCancelButton;
     private static POINT? _webClearButton;
     private static POINT? _webSaveButton;
 
@@ -43,7 +44,7 @@ internal static class Program
     // Global hotkeys, so the F-keys work while the browser has focus.
     private static readonly ConsoleKey[] HotKeys =
     {
-        ConsoleKey.F5, ConsoleKey.F6, ConsoleKey.F7, ConsoleKey.F8, ConsoleKey.F9, ConsoleKey.F10,
+        ConsoleKey.F4, ConsoleKey.F5, ConsoleKey.F6, ConsoleKey.F7, ConsoleKey.F8, ConsoleKey.F9, ConsoleKey.F10,
     };
 
     [STAThread]
@@ -53,6 +54,7 @@ internal static class Program
         Console.WriteLine("Wacom STU-430 -> Windows Mouse Bridge");
         Console.WriteLine("--------------------------------------");
         Console.WriteLine("F-keys work from any window (the browser does not receive them):");
+        Console.WriteLine("F4  = capture current mouse position as the website's CANCEL button");
         Console.WriteLine("F5  = capture current mouse position as the website's CLEAR button");
         Console.WriteLine("F6  = capture current mouse position as the website's SAVE button");
         Console.WriteLine("F7  = erase the signature on the STU screen");
@@ -96,10 +98,11 @@ internal static class Program
         Console.WriteLine("Calibrate the DOH signature popup (saved automatically):");
         Console.WriteLine("1) Put the mouse at the TOP-LEFT of the signature drawing area, press F8.");
         Console.WriteLine("2) Put the mouse at the BOTTOM-RIGHT of the signature drawing area, press F9.");
-        Console.WriteLine("3) Put the mouse on the website's Clear button, press F5.");
-        Console.WriteLine("4) Put the mouse on the website's Save button, press F6.");
-        Console.WriteLine("5) Press F10 to ENABLE, then sign on the STU-430.");
-        Console.WriteLine("6) Tap Clear or Save on the STU screen. Save also disables the bridge.");
+        Console.WriteLine("3) Put the mouse on the website's Cancel button, press F4.");
+        Console.WriteLine("4) Put the mouse on the website's Clear button, press F5.");
+        Console.WriteLine("5) Put the mouse on the website's Save button, press F6.");
+        Console.WriteLine("6) Press F10 to ENABLE, then sign on the STU-430.");
+        Console.WriteLine("7) Tap Cancel, Clear or Save on the STU screen. Save and Cancel also disable the bridge.");
         Console.WriteLine();
 
         RegisterHotKeys();
@@ -171,6 +174,7 @@ internal static class Program
             _right = s.Right;
             _bottom = s.Bottom;
             NormalizeRectangle();
+            _webCancelButton = s.CancelButton is { } x ? new POINT { X = x.X, Y = x.Y } : null;
             _webClearButton = s.ClearButton is { } c ? new POINT { X = c.X, Y = c.Y } : null;
             _webSaveButton = s.SaveButton is { } v ? new POINT { X = v.X, Y = v.Y } : null;
 
@@ -182,6 +186,7 @@ internal static class Program
 
             Console.WriteLine($"Loaded calibration from {BridgeSettings.FilePath}:");
             Console.WriteLine($"  Signature area = ({_left},{_top}) -> ({_right},{_bottom})");
+            Console.WriteLine($"  Website Cancel = {FormatPoint(_webCancelButton)}");
             Console.WriteLine($"  Website Clear  = {FormatPoint(_webClearButton)}");
             Console.WriteLine($"  Website Save   = {FormatPoint(_webSaveButton)}");
             Console.WriteLine("Only recalibrate if the browser window or popup has moved.");
@@ -206,6 +211,7 @@ internal static class Program
                 Top = _top,
                 Right = _right,
                 Bottom = _bottom,
+                CancelButton = _webCancelButton is { } x ? (x.X, x.Y) : null,
                 ClearButton = _webClearButton is { } c ? (c.X, c.Y) : null,
                 SaveButton = _webSaveButton is { } v ? (v.X, v.Y) : null,
             }.Save();
@@ -254,7 +260,16 @@ internal static class Program
 
     private static void HandleCommand(ConsoleKey key)
     {
-        if (key == ConsoleKey.F5)
+        if (key == ConsoleKey.F4)
+        {
+            if (GetCursorPos(out POINT p))
+            {
+                _webCancelButton = p;
+                SaveSettings();
+                Console.WriteLine($"Website CANCEL button set to ({p.X}, {p.Y})");
+            }
+        }
+        else if (key == ConsoleKey.F5)
         {
             if (GetCursorPos(out POINT p))
             {
@@ -325,13 +340,17 @@ internal static class Program
 
         ReleaseMouse();
 
-        var webButton = button == PadButton.Clear ? _webClearButton : _webSaveButton;
-        string name = button == PadButton.Clear ? "Clear" : "Save";
+        var (webButton, name, captureKey) = button switch
+        {
+            PadButton.Cancel => (_webCancelButton, "Cancel", "F4"),
+            PadButton.Clear => (_webClearButton, "Clear", "F5"),
+            _ => (_webSaveButton, "Save", "F6"),
+        };
 
         if (!_enabled)
             Console.WriteLine($"STU {name} tapped (bridge is off, website not clicked).");
         else if (webButton is null)
-            Console.WriteLine($"STU {name} tapped, but the website {name} button is not set (press {(button == PadButton.Clear ? "F5" : "F6")}).");
+            Console.WriteLine($"STU {name} tapped, but the website {name} button is not set (press {captureKey}).");
         else
         {
             ClickAt(webButton.Value);
@@ -340,11 +359,12 @@ internal static class Program
 
         DrawPadScreen();
 
-        if (button == PadButton.Save && _enabled)
+        // Save and Cancel both end the signing session (the website closes its popup).
+        if (button != PadButton.Clear && _enabled)
             SetEnabled(false);
     }
 
-    /// <summary>Draws the blank signing area plus Clear / Save buttons, which also wipes any ink.</summary>
+    /// <summary>Draws the blank signing area plus Cancel / Clear / Save buttons, which also wipes any ink.</summary>
     private static void DrawPadScreen()
     {
         if (_tablet is null || _pad is null || _protocolHelper is null)

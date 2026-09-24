@@ -28,7 +28,7 @@ cannot change it.
 
 It reads the pen through Wacom's official STU SDK and replays it as ordinary Windows mouse
 movement and left-button drag inside the area you calibrate. The pad's own screen shows
-**Clear** and **Save** buttons that press the website's Clear and Save buttons for you.
+**Cancel**, **Clear** and **Save** buttons that press the website's own buttons for you.
 
 > [!IMPORTANT]
 > Only use this on a workstation where you are authorized to use OS-level input emulation.
@@ -40,10 +40,10 @@ movement and left-button drag inside the area you calibrate. The pad's own scree
 | | |
 |---|---|
 | **Pen → mouse** | Pen contact becomes left-button drag, mapped onto the calibrated signature box. |
-| **Buttons on the pad** | Tap **Clear** or **Save** on the STU screen to click the website's own buttons. |
-| **Works from the browser** | F5–F10 are global hotkeys, so you never need to switch windows. |
+| **Buttons on the pad** | Tap **Cancel**, **Clear** or **Save** on the STU screen to click the website's own buttons. |
+| **Works from the browser** | F4–F10 are global hotkeys, so you never need to switch windows. |
 | **Remembers calibration** | Settings are saved to `wacom-bridge.conf` and reloaded on every start. |
-| **Safe by default** | Starts disabled; Save disables it again; the mouse button is always released. |
+| **Safe by default** | Starts disabled; Save and Cancel disable it again; the mouse button is always released. |
 | **No admin rights** | Registration-free COM: no `regsvr32`, no installer. |
 | **Test page included** | A local signature popup to rehearse before using the real website. |
 
@@ -54,14 +54,14 @@ flowchart LR
     A["STU-430 pen"] -->|"Wacom STU SDK<br/>onPenData"| B["wacom-bridge"]
     B -->|"SetCursorPos + SendInput"| C["Windows mouse"]
     C --> D["Web signature canvas"]
-    B -->|"writeImage"| E["STU screen:<br/>Clear / Save buttons"]
+    B -->|"writeImage"| E["STU screen:<br/>Cancel / Clear / Save"]
     E -->|"tap"| B
 ```
 
 The STU screen is split into a signing area and a button strip:
 
 <p align="center">
-  <img src="docs/pad-screen.png" alt="STU-430 screen layout: blank signing area on top, Clear and Save buttons along the bottom" width="320">
+  <img src="docs/pad-screen.png" alt="STU-430 screen layout: blank signing area on top, Cancel, Clear and Save buttons along the bottom" width="320">
 </p>
 
 Only the signing area moves the mouse. The button strip never draws on the website.
@@ -123,12 +123,12 @@ and the Wacom STU driver.
 You calibrate once. The bridge saves everything and reuses it on every start.
 
 1. **Close Wacom DemoButtons** or any other program using the pad.
-2. **Start** `WacomStuMouseBridge.exe`. The pad shows the Clear / Save buttons.
+2. **Start** `WacomStuMouseBridge.exe`. The pad shows the Cancel / Clear / Save buttons.
 3. **Open the website's signature popup** in your browser.
 4. **Mark the signature box.** Point the mouse at the top-left inside corner of the white
    drawing area and press **F8**, then at the bottom-right inside corner and press **F9**.
-5. **Mark the buttons.** Point at the website's **Clear** button and press **F5**, then its
-   **Save** button and press **F6**.
+5. **Mark the buttons.** Point at each of the website's buttons and press its key:
+   **Cancel** → **F4**, **Clear** → **F5**, **Save** → **F6**.
 
 The console confirms each step, and the calibration is written to
 [`wacom-bridge.conf`](#settings-file).
@@ -150,13 +150,17 @@ The console confirms each step, and the calibration is written to
 Made a mistake? Tap **Clear** on the pad. It clicks the website's Clear button and wipes
 the pad.
 
+Changed your mind? Tap **Cancel** on the pad. It clicks the website's Cancel button to close
+the popup, wipes the pad and **disables** the bridge.
+
 ## Keyboard reference
 
-F5–F10 work from **any window**. While the bridge runs, the browser does not receive them.
+F4–F10 work from **any window**. While the bridge runs, the browser does not receive them.
 This also stops F5 from accidentally reloading the page and losing a signature.
 
 | Key | Action | Saved |
 |:---:|---|:---:|
+| <kbd>F4</kbd> | Set the website's **Cancel** button to the current mouse position | ✓ |
 | <kbd>F5</kbd> | Set the website's **Clear** button to the current mouse position | ✓ |
 | <kbd>F6</kbd> | Set the website's **Save** button to the current mouse position | ✓ |
 | <kbd>F7</kbd> | Wipe the ink on the pad (keeps the buttons) | |
@@ -169,21 +173,23 @@ On the pad:
 
 | Pad button | Bridge enabled | Bridge disabled |
 |---|---|---|
+| **Cancel** | Clicks website Cancel (closes the popup), wipes the pad, disables the bridge | Wipes the pad |
 | **Clear** | Clicks website Clear, wipes the pad | Wipes the pad |
 | **Save** | Clicks website Save, wipes the pad, disables the bridge | Wipes the pad |
 
 ## Settings file
 
 Calibration is stored in **`wacom-bridge.conf`**, next to the EXE. It's written every time
-you press F5, F6, F8 or F9 and read at startup, so it survives restarts and reboots.
+you press F4, F5, F6, F8 or F9 and read at startup, so it survives restarts and reboots.
 
 ```ini
-# wacom-bridge calibration (screen pixels). Written by the bridge on F5/F6/F8/F9.
+# wacom-bridge calibration (screen pixels). Written by the bridge on F4/F5/F6/F8/F9.
 # Delete this file to reset. button.* = x,y or empty if not set.
 area.left=412
 area.top=318
 area.right=1012
 area.bottom=558
+button.cancel=820,620
 button.clear=450,620
 button.save=960,620
 ```
@@ -192,6 +198,7 @@ button.save=960,620
 |---|---|
 | `area.left`, `area.top` | Top-left of the signature box (F8) |
 | `area.right`, `area.bottom` | Bottom-right of the signature box (F9) |
+| `button.cancel` | Website Cancel button as `x,y`, empty if not set (F4) |
 | `button.clear` | Website Clear button as `x,y`, empty if not set (F5) |
 | `button.save` | Website Save button as `x,y`, empty if not set (F6) |
 
@@ -269,10 +276,10 @@ white drawing area. The new values are saved automatically.
 </details>
 
 <details>
-<summary><b>Tapping Save / Clear on the pad does nothing on the website</b></summary>
+<summary><b>Tapping Cancel / Clear / Save on the pad does nothing on the website</b></summary>
 
 - Is the bridge **enabled** (F10)? When it's disabled, the pad buttons only wipe the pad.
-- Set the website buttons with **F5** (Clear) and **F6** (Save). The console tells you if one is missing.
+- Set the website buttons with **F4** (Cancel), **F5** (Clear) and **F6** (Save). The console tells you if one is missing.
 
 </details>
 
@@ -301,7 +308,7 @@ wacom-bridge/
 ├── docs/                         README images
 └── WacomStuMouseBridge/
     ├── Program.cs                Tablet connection, pen → mouse, hotkeys, pad buttons
-    ├── PadScreen.cs              STU screen layout and rendering (Clear / Save)
+    ├── PadScreen.cs              STU screen layout and rendering (Cancel / Clear / Save)
     ├── BridgeSettings.cs         wacom-bridge.conf load / save
     ├── app.manifest              Registration-free COM for the x64 wgssSTU.dll
     ├── WacomStuMouseBridge.csproj

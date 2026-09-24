@@ -5,6 +5,20 @@ All notable changes to **wacom-bridge** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-09-24
+
+### Added
+
+- **Cancel button on the pad**, left of Clear and Save. Tapping it clicks the website's
+  Cancel button to close the signature popup, wipes the pad and disables the bridge.
+- **F4** records the website's Cancel button position. F4 is now a global hotkey too.
+- `button.cancel` setting in `wacom-bridge.conf`. Existing 1.0.0 config files keep
+  working; press F4 once to add the Cancel position.
+
+### Changed
+
+- The pad's button strip is now **Cancel · Clear · Save**, with Save on the right.
+
 ## [1.0.0] - 2026-09-24
 
 First public release.
@@ -51,4 +65,5 @@ First public release.
 - Requires Windows 10/11 x64 and a Wacom STU-430. Other STU models may work but have
   not been tested.
 
+[1.1.0]: https://github.com/wartle/wacom-bridge/releases/tag/v1.1.0
 [1.0.0]: https://github.com/wartle/wacom-bridge/releases/tag/v1.0.0

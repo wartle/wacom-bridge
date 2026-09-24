@@ -18,7 +18,8 @@ internal sealed class BridgeSettings
     public int Right { get; set; } = 900;
     public int Bottom { get; set; } = 600;
 
-    // Website button positions in screen pixels (F5 / F6); null = not set.
+    // Website button positions in screen pixels (F4 / F5 / F6); null = not set.
+    public (int X, int Y)? CancelButton { get; set; }
     public (int X, int Y)? ClearButton { get; set; }
     public (int X, int Y)? SaveButton { get; set; }
 
@@ -48,6 +49,7 @@ internal sealed class BridgeSettings
                 case "area.top": if (TryInt(value, out int t)) settings.Top = t; break;
                 case "area.right": if (TryInt(value, out int r)) settings.Right = r; break;
                 case "area.bottom": if (TryInt(value, out int b)) settings.Bottom = b; break;
+                case "button.cancel": settings.CancelButton = TryPoint(value); break;
                 case "button.clear": settings.ClearButton = TryPoint(value); break;
                 case "button.save": settings.SaveButton = TryPoint(value); break;
             }
@@ -60,12 +62,13 @@ internal sealed class BridgeSettings
     {
         var lines = new[]
         {
-            "# wacom-bridge calibration (screen pixels). Written by the bridge on F5/F6/F8/F9.",
+            "# wacom-bridge calibration (screen pixels). Written by the bridge on F4/F5/F6/F8/F9.",
             "# Delete this file to reset. button.* = x,y or empty if not set.",
             $"area.left={Left}",
             $"area.top={Top}",
             $"area.right={Right}",
             $"area.bottom={Bottom}",
+            $"button.cancel={FormatPoint(CancelButton)}",
             $"button.clear={FormatPoint(ClearButton)}",
             $"button.save={FormatPoint(SaveButton)}",
         };

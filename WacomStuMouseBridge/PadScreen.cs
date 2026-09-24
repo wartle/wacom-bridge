@@ -9,17 +9,19 @@ internal enum PadButton
     None = 0,
     Clear = 1,
     Save = 2,
+    Cancel = 3,
 }
 
 /// <summary>
 /// Layout of the STU LCD: a signing area on top and a strip with
-/// Clear / Save buttons along the bottom. All coordinates are LCD pixels.
+/// Cancel / Clear / Save buttons along the bottom. All coordinates are LCD pixels.
 /// </summary>
 internal sealed class PadScreen
 {
     public int Width { get; }
     public int Height { get; }
     public Rectangle SignArea { get; }
+    public Rectangle CancelButton { get; }
     public Rectangle ClearButton { get; }
     public Rectangle SaveButton { get; }
 
@@ -30,17 +32,20 @@ internal sealed class PadScreen
 
         int strip = Math.Max(30, height / 5); // 40 px on the 320x200 STU-430
         const int gap = 8;
-        int buttonWidth = (width - gap * 3) / 2;
+        int buttonWidth = (width - gap * 4) / 3;
         int buttonTop = height - strip + 5;
         int buttonHeight = strip - 10;
 
         SignArea = new Rectangle(0, 0, width, height - strip);
-        ClearButton = new Rectangle(gap, buttonTop, buttonWidth, buttonHeight);
-        SaveButton = new Rectangle(gap * 2 + buttonWidth, buttonTop, buttonWidth, buttonHeight);
+        // Left to right: Cancel, Clear, Save (primary action on the right).
+        CancelButton = new Rectangle(gap, buttonTop, buttonWidth, buttonHeight);
+        ClearButton = new Rectangle(gap * 2 + buttonWidth, buttonTop, buttonWidth, buttonHeight);
+        SaveButton = new Rectangle(gap * 3 + buttonWidth * 2, buttonTop, buttonWidth, buttonHeight);
     }
 
     public PadButton HitTest(int x, int y)
     {
+        if (CancelButton.Contains(x, y)) return PadButton.Cancel;
         if (ClearButton.Contains(x, y)) return PadButton.Clear;
         if (SaveButton.Contains(x, y)) return PadButton.Save;
         return PadButton.None;
@@ -62,7 +67,7 @@ internal sealed class PadScreen
             using var font = new Font("Segoe UI", 16f, FontStyle.Bold, GraphicsUnit.Pixel);
             using var center = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
-            foreach (var (rect, label) in new[] { (ClearButton, "Clear"), (SaveButton, "Save") })
+            foreach (var (rect, label) in new[] { (CancelButton, "Cancel"), (ClearButton, "Clear"), (SaveButton, "Save") })
             {
                 g.DrawRectangle(line, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
                 g.DrawString(label, font, Brushes.Black, rect, center);

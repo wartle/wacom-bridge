@@ -48,7 +48,7 @@ Then run WacomStuMouseBridge.exe. No .NET install or admin rights needed.
 Keep this folder somewhere writable (not C:\Program Files) so calibration
 can be saved to wacom-bridge.conf.
 
-Keys: F8/F9 signature box corners, F5/F6 website Clear/Save buttons,
+Keys: F8/F9 signature box corners, F4/F5/F6 website Cancel/Clear/Save,
       F10 enable/disable, F7 wipe pad, Esc quit.
 "@ | Set-Content "$out\README.txt" -Encoding UTF8
 
