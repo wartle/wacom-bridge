@@ -82,7 +82,10 @@ internal static class Program
         }
 
         Console.WriteLine();
-        Console.WriteLine("Connected. Calibrate the DOH signature popup:");
+        Console.WriteLine("Connected.");
+        LoadSettings();
+
+        Console.WriteLine("Calibrate the DOH signature popup (saved automatically):");
         Console.WriteLine("1) Put the mouse at the TOP-LEFT of the signature drawing area, press F8.");
         Console.WriteLine("2) Put the mouse at the BOTTOM-RIGHT of the signature drawing area, press F9.");
         Console.WriteLine("3) Put the mouse on the website's Clear button, press F5.");
@@ -135,6 +138,63 @@ internal static class Program
         Console.WriteLine($"LCD: {_capability.screenWidth} x {_capability.screenHeight} ({(_padIsColor ? "colour" : "monochrome")})");
     }
 
+    private static void LoadSettings()
+    {
+        try
+        {
+            var s = BridgeSettings.Load(out bool loaded);
+            _left = s.Left;
+            _top = s.Top;
+            _right = s.Right;
+            _bottom = s.Bottom;
+            NormalizeRectangle();
+            _webClearButton = s.ClearButton is { } c ? new POINT { X = c.X, Y = c.Y } : null;
+            _webSaveButton = s.SaveButton is { } v ? new POINT { X = v.X, Y = v.Y } : null;
+
+            if (!loaded)
+            {
+                Console.WriteLine($"No saved calibration yet ({BridgeSettings.FilePath}).");
+                return;
+            }
+
+            Console.WriteLine($"Loaded calibration from {BridgeSettings.FilePath}:");
+            Console.WriteLine($"  Signature area = ({_left},{_top}) -> ({_right},{_bottom})");
+            Console.WriteLine($"  Website Clear  = {FormatPoint(_webClearButton)}");
+            Console.WriteLine($"  Website Save   = {FormatPoint(_webSaveButton)}");
+            Console.WriteLine("Only recalibrate if the browser window or popup has moved.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Could not read {BridgeSettings.FilePath}: {ex.Message}");
+        }
+        finally
+        {
+            Console.WriteLine();
+        }
+    }
+
+    private static void SaveSettings()
+    {
+        try
+        {
+            new BridgeSettings
+            {
+                Left = _left,
+                Top = _top,
+                Right = _right,
+                Bottom = _bottom,
+                ClearButton = _webClearButton is { } c ? (c.X, c.Y) : null,
+                SaveButton = _webSaveButton is { } v ? (v.X, v.Y) : null,
+            }.Save();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Could not save {BridgeSettings.FilePath}: {ex.Message}");
+        }
+    }
+
+    private static string FormatPoint(POINT? p) => p is { } v ? $"({v.X}, {v.Y})" : "not set";
+
     private static byte ReadEncodingFlag(ICapability capability)
     {
         // Older firmware has no encodingFlag; simulateEncodingFlag then infers it from the product id.
@@ -176,6 +236,7 @@ internal static class Program
             if (GetCursorPos(out POINT p))
             {
                 _webClearButton = p;
+                SaveSettings();
                 Console.WriteLine($"Website CLEAR button set to ({p.X}, {p.Y})");
             }
         }
@@ -184,6 +245,7 @@ internal static class Program
             if (GetCursorPos(out POINT p))
             {
                 _webSaveButton = p;
+                SaveSettings();
                 Console.WriteLine($"Website SAVE button set to ({p.X}, {p.Y})");
             }
         }
@@ -198,6 +260,7 @@ internal static class Program
             {
                 _left = p.X;
                 _top = p.Y;
+                SaveSettings();
                 Console.WriteLine($"TOP-LEFT set to ({_left}, {_top})");
             }
         }
@@ -208,6 +271,7 @@ internal static class Program
                 _right = p.X;
                 _bottom = p.Y;
                 NormalizeRectangle();
+                SaveSettings();
                 Console.WriteLine($"BOTTOM-RIGHT set. Rectangle = ({_left},{_top}) -> ({_right},{_bottom})");
             }
         }

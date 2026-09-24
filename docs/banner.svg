@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="300" viewBox="0 0 960 300" role="img" aria-labelledby="t d">
+  <title id="t">wacom-bridge</title>
+  <desc id="d">A Wacom STU-430 signature pad sends pen input through wacom-bridge, which turns it into mouse input for a web signature canvas.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#22C55E"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="300" rx="16" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="48" y="78" font-family="JetBrains Mono, Consolas, Menlo, monospace" font-size="40" font-weight="700" fill="#F8FAFC">wacom-bridge</text>
+  <text x="48" y="112" font-family="Segoe UI, IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="18" fill="#94A3B8">Sign on a Wacom STU-430. Draw on any mouse-driven web signature canvas.</text>
+
+  <!-- Pad -->
+  <g transform="translate(48 150)">
+    <rect width="220" height="112" rx="12" fill="#1B2336" stroke="#475569" stroke-width="2"/>
+    <rect x="14" y="12" width="192" height="88" rx="4" fill="#F8FAFC"/>
+    <path d="M30 58 C45 30, 60 80, 78 52 S108 40, 118 60 S150 70, 170 48" fill="none" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+    <line x1="14" y1="78" x2="206" y2="78" stroke="#0F172A" stroke-width="1.5"/>
+    <rect x="24" y="83" width="80" height="13" rx="2" fill="none" stroke="#0F172A" stroke-width="1.5"/>
+    <text x="64" y="93.5" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9" font-weight="700" fill="#0F172A">Clear</text>
+    <rect x="116" y="83" width="80" height="13" rx="2" fill="none" stroke="#0F172A" stroke-width="1.5"/>
+    <text x="156" y="93.5" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9" font-weight="700" fill="#0F172A">Save</text>
+  </g>
+  <text x="158" y="284" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="13" fill="#94A3B8">STU-430 pen</text>
+
+  <line x1="282" y1="206" x2="366" y2="206" stroke="#22C55E" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- Bridge -->
+  <g transform="translate(378 166)">
+    <rect width="204" height="80" rx="12" fill="#1B2336" stroke="#22C55E" stroke-width="2"/>
+    <text x="102" y="36" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="17" font-weight="700" fill="#F8FAFC">wacom-bridge</text>
+    <text x="102" y="58" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="12" fill="#94A3B8">pen → SendInput</text>
+  </g>
+  <text x="480" y="284" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="13" fill="#94A3B8">Windows mouse</text>
+
+  <line x1="594" y1="206" x2="678" y2="206" stroke="#22C55E" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- Browser -->
+  <g transform="translate(690 150)">
+    <rect width="222" height="112" rx="10" fill="#1B2336" stroke="#475569" stroke-width="2"/>
+    <circle cx="16" cy="15" r="4" fill="#475569"/>
+    <circle cx="30" cy="15" r="4" fill="#475569"/>
+    <circle cx="44" cy="15" r="4" fill="#475569"/>
+    <rect x="12" y="28" width="198" height="72" rx="4" fill="#F8FAFC"/>
+    <path d="M28 70 C43 42, 58 92, 76 64 S106 52, 116 72 S148 82, 168 60" fill="none" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <text x="801" y="284" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="13" fill="#94A3B8">web signature canvas</text>
+</svg>

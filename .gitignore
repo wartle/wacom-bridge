@@ -7,3 +7,6 @@ publish/
 
 # Wacom STU SDK binaries are proprietary; copy them from your SDK install (see README).
 WacomStuMouseBridge/lib/*.dll
+
+# Local calibration (screen positions are specific to each PC)
+wacom-bridge.conf
