@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>WacomStuMouseBridge</AssemblyName>
+    <RootNamespace>WacomStuMouseBridge</RootNamespace>
+    <!-- Registration-free COM for the x64 wgssSTU.dll (see app.manifest). -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- For System.Drawing, used to render the Clear / Save buttons on the STU screen. -->
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+  </ItemGroup>
+
+  <!--
+    Both files come from the Wacom STU SDK, x64 flavour:
+      C:\Program Files (x86)\Wacom STU SDK\COM\bin\x64\Interop.wgssSTU.dll  (.NET interop)
+      C:\Program Files (x86)\Wacom STU SDK\COM\bin\x64\wgssSTU.dll          (native COM server)
+  -->
+  <ItemGroup>
+    <Reference Include="Interop.wgssSTU">
+      <HintPath>lib\Interop.wgssSTU.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <None Include="lib\wgssSTU.dll" Link="wgssSTU.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

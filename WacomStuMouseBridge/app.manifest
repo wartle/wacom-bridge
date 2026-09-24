@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Registration-free COM: lets the 64-bit bridge load the x64 wgssSTU.dll that sits
+  next to the exe without running regsvr32 (the SDK only registers the 32-bit one).
+-->
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity version="1.0.0.0" name="WacomStuMouseBridge.app" />
+  <file name="wgssSTU.dll">
+    <typelib tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" version="2.4" helpdir="" />
+    <comClass clsid="{20000000-5D96-46B0-895F-B0CC7295E44D}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{20001CFF-184E-4E32-9FC4-A617533D342E}" threadingModel="Apartment" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{20002178-1165-4D38-A7F5-B169DE2045C1}" threadingModel="Apartment" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{20002981-FEBA-4438-BE91-043FFA45CC94}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{20003105-1669-49A9-8DE9-80E1792D6D6A}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{20006BFE-4AF1-4F88-8AE0-D87CBBA30CD0}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{200077CB-B6D7-4C0E-97EA-EBBB35051EF4}" threadingModel="Apartment" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{20008BA5-8133-45BA-91A5-AB54A1F70E13}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{2000A253-30B8-4B7D-87CF-623FBF39B0FE}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{2000B45D-344F-4FA7-8FDD-6C957FC499F2}" threadingModel="Apartment" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{2000BC66-5735-45C7-9521-93FAAFE8C3BB}" threadingModel="Apartment" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{2000CF89-E182-40AD-A8C2-5694987EA5DF}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{2000D408-6AFE-4CBA-BDB1-DA087DA66B05}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+    <comClass clsid="{2000D7A5-64F7-4826-B56E-85ACC618E4D6}" threadingModel="Both" tlbid="{20007867-2524-410F-A904-CF6A6A976D89}" />
+  </file>
+</assembly>

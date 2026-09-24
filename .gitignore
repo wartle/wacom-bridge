@@ -1,0 +1,9 @@
+# Build output
+bin/
+obj/
+publish/
+*.user
+.vs/
+
+# Wacom STU SDK binaries are proprietary; copy them from your SDK install (see README).
+WacomStuMouseBridge/lib/*.dll
